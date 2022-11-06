@@ -1,6 +1,7 @@
 import json
 import os
 import time
+from datetime import datetime
 
 import requests
 from importlib_metadata import pathlib
@@ -63,7 +64,7 @@ for tweet_id in sorted(known_tweets):
                 headers=auth,
             )
             if tweet.status_code == 429:
-                print("too many requests, pausing for 5 minutes")
+                print("too many requests, pausing for 5 minutes", datetime.now())
                 time.sleep(300)
                 continue
             tweet.raise_for_status()
