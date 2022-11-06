@@ -1,8 +1,9 @@
 import json
-import time
-from importlib_metadata import pathlib
-import requests
 import os
+import time
+
+import requests
+from importlib_metadata import pathlib
 
 bearer = os.environ["BEARER_TOKEN"]
 
@@ -13,7 +14,9 @@ folder = pathlib.Path(__file__).parent.joinpath("users", username)
 if not folder.exists():
     folder.mkdir()
 
-user = requests.get(f"https://api.twitter.com/2/users/by/username/{username}", headers=auth)
+user = requests.get(
+    f"https://api.twitter.com/2/users/by/username/{username}", headers=auth
+)
 user.raise_for_status()
 user_id = user.json()["data"]["id"]
 
@@ -26,10 +29,16 @@ except (FileNotFoundError, json.decoder.JSONDecodeError):
 next_token = None
 while False:
     if next_token is not None:
-        tweets = requests.get(f"https://api.twitter.com/2/users/{user_id}/tweets?max_results=100&pagination_token={next_token}", headers=auth)
+        tweets = requests.get(
+            f"https://api.twitter.com/2/users/{user_id}/tweets?max_results=100&pagination_token={next_token}",
+            headers=auth,
+        )
     else:
-        tweets = requests.get(f"https://api.twitter.com/2/users/{user_id}/tweets?max_results=100", headers=auth)
-    
+        tweets = requests.get(
+            f"https://api.twitter.com/2/users/{user_id}/tweets?max_results=100",
+            headers=auth,
+        )
+
     tweets.raise_for_status()
     tweets = tweets.json()
     for tweet in tweets["data"]:
@@ -49,7 +58,10 @@ for tweet_id in sorted(known_tweets):
     if not tweet_path.exists():
         print(tweet_id)
         while True:
-            tweet = requests.get(f"https://api.twitter.com/2/tweets/{tweet_id}?expansions=author_id,in_reply_to_user_id,referenced_tweets.id,referenced_tweets.id.author_id&tweet.fields=created_at,in_reply_to_user_id", headers=auth)
+            tweet = requests.get(
+                f"https://api.twitter.com/2/tweets/{tweet_id}?expansions=author_id,in_reply_to_user_id,referenced_tweets.id,referenced_tweets.id.author_id&tweet.fields=created_at,in_reply_to_user_id",
+                headers=auth,
+            )
             if tweet.status_code == 429:
                 print("too many requests, pausing for 5 minutes")
                 time.sleep(300)

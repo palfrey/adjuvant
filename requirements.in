@@ -1,2 +1,3 @@
 pip-tools
 requests
+pre-commit
